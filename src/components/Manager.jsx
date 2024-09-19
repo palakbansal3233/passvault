@@ -10,9 +10,16 @@ const Manager = () => {
 
   useEffect(() => {
     let passwords = localStorage.getItem("passwords");
-    if (passwords) {
-      setPasswordArray(JSON.parse(passwords));
+    try {
+      passwords = JSON.parse(passwords) || [];
+      if (!Array.isArray(passwords)) {
+        passwords = [];
+      }
+    } catch (error) {
+      passwords = [];
+      throw error;
     }
+    setPasswordArray(passwords);
   }, []);
 
   const showPassword = () => {
@@ -24,9 +31,9 @@ const Manager = () => {
   };
 
   const savePassword = () => {
-    setPasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
-    console.log([...passwordArray, form]);
+    const updatedPasswordArray = [...passwordArray, form];
+    setPasswordArray(updatedPasswordArray);
+    localStorage.setItem("passwords", JSON.stringify(updatedPasswordArray));
   };
 
   const handleChange = (e) => {
@@ -46,7 +53,6 @@ const Manager = () => {
             className="rounded-full border border-purple-900 w-full text-black px-4 py-1"
             type="text"
             name="site"
-            id=""
             placeholder="Enter Website URL"
             value={form.site}
             onChange={handleChange}
@@ -56,7 +62,6 @@ const Manager = () => {
               className="rounded-full border border-purple-900 w-full text-black px-4 py-1"
               type="text"
               name="userName"
-              id=""
               placeholder="Enter Username"
               value={form.userName}
               onChange={handleChange}
@@ -66,7 +71,6 @@ const Manager = () => {
                 className="rounded-full border border-purple-900 w-full text-black px-4 py-1"
                 type="text"
                 name="password"
-                id=""
                 placeholder="Enter Password"
                 value={form.password}
                 onChange={handleChange}
